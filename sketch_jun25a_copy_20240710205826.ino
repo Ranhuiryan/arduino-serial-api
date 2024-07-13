@@ -18,14 +18,14 @@
 unsigned long previousMillis = 0;    // 存储上一次打印位置的时间
 const unsigned long reportInterval = 1000; // 定义打印位置的时间间隔（毫秒）
 
+AccelStepper stepper1(AccelStepper::DRIVER, STEPPER1_STEP_PIN, STEPPER1_DIR_PIN); // 配置电机1 的脉冲引脚 方向引脚
+AccelStepper stepper2(AccelStepper::DRIVER, STEPPER2_STEP_PIN, STEPPER2_DIR_PIN); // 配置电机2 的脉冲引脚 方向引脚
+
 float targetSpeed = 200;
 int targetAcceleration = 200;
 float targetPosition = -9999999999;
-// float startPosition = 0;
-// char lis;
-
-AccelStepper stepper1(AccelStepper::DRIVER, STEPPER1_STEP_PIN, STEPPER1_DIR_PIN); // 配置电机1 的脉冲引脚 方向引脚
-AccelStepper stepper2(AccelStepper::DRIVER, STEPPER2_STEP_PIN, STEPPER2_DIR_PIN); // 配置电机2 的脉冲引脚 方向引脚
+float startPosition = 0;
+long nowPosition = 0;
 
 void remove_quotes(char *str)
 {
@@ -109,15 +109,17 @@ void serialEvent()
     if (inString != "")
     {
         // isSerialControl = true; // 串口控制标志位置为true
-        int MaxSpeed, Acceleration, moveto, loc;
+        float MaxSpeed, moveto;
+        int Acceleration, loc;
         parse_input(inString.c_str(), &MaxSpeed, &Acceleration, &moveto);
         stepper1.setMaxSpeed(MaxSpeed);
         stepper2.setMaxSpeed(MaxSpeed);
         stepper1.setAcceleration(Acceleration);
         stepper2.setAcceleration(Acceleration);
-        loc = loc + moveto;
-        stepper1.moveTo(-moveto);
-        stepper2.moveTo(-moveto);
+        loc =  nowPosition + moveto;
+        Serial.println(-loc);
+        stepper1.moveTo(-loc);
+        stepper2.moveTo(-loc);
         // speed = MaxSpeed;
     }
 }
@@ -125,10 +127,10 @@ void serialEvent()
 void setup()
 {
     Serial.begin(9600);
-    // pinMode(BUTTON_INIT, INPUT);
-    // pinMode(BUTTON_SPEED_UP, INPUT);
-    // pinMode(BUTTON_ZERO, INPUT);
-    // pinMode(BUTTON_REPORT, INPUT);
+    pinMode(BUTTON_INIT, INPUT);
+    pinMode(BUTTON_SPEED_UP, INPUT);
+    pinMode(BUTTON_ZERO, INPUT);
+    pinMode(BUTTON_REPORT, INPUT);
     pinMode(ENA_PIN, OUTPUT);
     digitalWrite(ENA_PIN, HIGH); // 高电平使能电机
     attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN1), buttonMode1, CHANGE);
@@ -136,9 +138,7 @@ void setup()
 }
 
 void loop()
-{
-    float startPosition = 0;
-
+{   nowPosition = abs(stepper1.currentPosition());
     if (digitalRead(BUTTON_ZERO) == HIGH)
     {
         startPosition = stepper1.currentPosition();
@@ -149,24 +149,20 @@ void loop()
         targetSpeed = 800;
         targetAcceleration = 400;
         targetPosition = startPosition;
-        // digitalWrite(BUTTON_INIT,LOW);
     }
     if (digitalRead(BUTTON_SPEED_UP) == HIGH)
     {
         targetSpeed = 400;
+        targetPosition = -999999999;
         // digitalWrite(BUTTON_SPEED_UP,LOW);
         // Serial.println(speed);
     }
     if (digitalRead(BUTTON_REPORT) == HIGH)
     {
         targetSpeed = 800;
+        targetPosition = -999999999;
         // digitalWrite(BUTTON_REPORT,LOW);
     }
-    // if (digitalRead(interruptPin1)==HIGH){
-    //   speed = -200;
-    //   Acceleration = -200;
-    //   move_to = -9999999999;
-    // }
     stepper1.run();
     stepper2.run();
 

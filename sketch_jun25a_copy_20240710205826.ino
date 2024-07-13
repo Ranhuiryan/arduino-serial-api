@@ -25,7 +25,7 @@ float targetSpeed = 200;
 int targetAcceleration = 200;
 float targetPosition = -9999999999;
 float startPosition = 0;
-long nowPosition = 0;
+float nowPosition = 0;
 
 void remove_quotes(char *str)
 {
@@ -109,18 +109,16 @@ void serialEvent()
     if (inString != "")
     {
         // isSerialControl = true; // 串口控制标志位置为true
-        float MaxSpeed, moveto;
-        int Acceleration, loc;
+        float MaxSpeed, moveto,loc;
+        int Acceleration;
         parse_input(inString.c_str(), &MaxSpeed, &Acceleration, &moveto);
         stepper1.setMaxSpeed(MaxSpeed);
         stepper2.setMaxSpeed(MaxSpeed);
         stepper1.setAcceleration(Acceleration);
         stepper2.setAcceleration(Acceleration);
         loc =  nowPosition + moveto;
-        Serial.println(-loc);
-        stepper1.moveTo(-loc);
-        stepper2.moveTo(-loc);
-        // speed = MaxSpeed;
+        stepper1.moveTo(loc);
+        stepper2.moveTo(loc);
     }
 }
 
@@ -138,7 +136,7 @@ void setup()
 }
 
 void loop()
-{   nowPosition = abs(stepper1.currentPosition());
+{   nowPosition = stepper1.currentPosition();
     if (digitalRead(BUTTON_ZERO) == HIGH)
     {
         startPosition = stepper1.currentPosition();

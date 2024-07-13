@@ -42,13 +42,29 @@ This project is designed to facilitate communication between a Flask-based web A
 
 ## Using the API
 
+### Send Command
+
 To send data to the Arduino, make a POST request to the API with a JSON payload containing the `speed`, `acceleration`, and `distance` values. For example:
 
 ```sh
 curl -X POST http://127.0.0.1:5500/send_data -H "Content-Type: application/json" -d '{"speed": 800, "acceleration": 200, "distance": 300}'
 ```
 
+## Checking Device Status
+
+To check the current status of the Arduino device, you can make a GET request to the `/status` endpoint. This will return the current position and speed of the device.
+
+```sh
+curl http://127.0.0.1:5500/status
+```
+
 ### Response
 
-- On success, the API returns a JSON response with a status of "success" and the sent data.
-- If the request is not in JSON format or the required data is missing, the API returns an error message.
+- The API returns a JSON response with the current `position` and `speed` of the Arduino device.
+- Example response:
+  ```json
+  {
+    "position": 100,
+    "speed": 50
+  }
+  ```

@@ -173,7 +173,7 @@ void loop()
 
         // 创建包含当前位置和速度的字符串缓冲区
         String buffer = String(stepper1.currentPosition()) + "," + String(targetSpeed);
-        // Serial.println(buffer);  // 将缓冲区打印到串口监视器
+        Serial.println(buffer);  // 将缓冲区打印到串口监视器
     }
 }
 

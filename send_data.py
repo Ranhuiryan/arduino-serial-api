@@ -24,6 +24,7 @@ def send_command():
         
         if speed is not None and acceleration is not None and distance is not None:
             speed = convert_distance_to_pulse(speed)
+            acceleration = convert_distance_to_pulse(acceleration)
             pulse = convert_distance_to_pulse(distance)
             data_to_send = f"{speed},{acceleration},{-pulse}"
             arduino.write(bytes(data_to_send, 'utf-8'))

@@ -109,11 +109,15 @@ void serialEvent()
     if (inString != "")
     {
         // isSerialControl = true; // 串口控制标志位置为true
-        float MaxSpeed, moveto,loc;
+        // float MaxSpeed, moveto,loc;
+        float moveto, loc;
         int Acceleration;
-        parse_input(inString.c_str(), &MaxSpeed, &Acceleration, &moveto);
-        stepper1.setMaxSpeed(MaxSpeed);
-        stepper2.setMaxSpeed(MaxSpeed);
+        // parse_input(inString.c_str(), &MaxSpeed, &Acceleration, &moveto);
+        // stepper1.setMaxSpeed(MaxSpeed);
+        // stepper2.setMaxSpeed(MaxSpeed);
+        parse_input(inString.c_str(), &targetSpeed, &Acceleration, &moveto);
+        stepper1.setMaxSpeed(targetSpeed);
+        stepper2.setMaxSpeed(targetSpeed);
         stepper1.setAcceleration(Acceleration);
         stepper2.setAcceleration(Acceleration);
         loc =  nowPosition + moveto;

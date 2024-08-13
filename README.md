@@ -34,11 +34,16 @@ This project is designed to facilitate communication between a Flask-based web A
 ### Running the API
 
 1. Ensure your Arduino device is connected to your computer.
-2. Run the Flask application:
+2. Find the port number of your Arduino device.
+   ```bash
+   python -m serial.tools.list_ports
+   ```
+3. set the port number in the `send_data.py` file.
+4. Run the Flask application:
    ```sh
    python send_data.py
    ```
-3. The API will be available at `http://127.0.0.1:5500/send_data`.
+5. The API will be available at `http://127.0.0.1:5500/send_command`.
 
 ## Using the API
 
@@ -47,7 +52,7 @@ This project is designed to facilitate communication between a Flask-based web A
 To send data to the Arduino, make a POST request to the API with a JSON payload containing the `speed`, `acceleration`, and `distance` values. For example:
 
 ```sh
-curl -X POST http://127.0.0.1:5500/send_data -H "Content-Type: application/json" -d '{"speed": 800, "acceleration": 200, "distance": 300}'
+curl -X POST http://127.0.0.1:5500/send_command -H "Content-Type: application/json" -d '{"speed": 1, "acceleration": 0.2, "distance": 25}'
 ```
 
 ## Checking Device Status

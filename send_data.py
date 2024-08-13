@@ -3,7 +3,7 @@ import time
 from flask import Flask, request, jsonify
 
 # 初始化串口
-arduino = serial.Serial(port='/dev/ttyUSB0', baudrate=9600, timeout=.1)
+arduino = serial.Serial(port='/dev/cu.usbserial-240', baudrate=9600, timeout=.1)
 
 def convert_distance_to_pulse(distance):
     return distance / 0.5 * 800   # 0.5cm导程对应800个脉冲
@@ -43,7 +43,8 @@ def status():
         return jsonify({"position": 0, "speed": 0}), 200
     else:
         position, speed = data.split(',')
-        return jsonify({"position": convert_pulse_to_distance(int(position)), "speed": convert_pulse_to_distance(int(speed))}), 200
+        return jsonify({"position": convert_pulse_to_distance(-int(position)), "speed": convert_pulse_to_distance(float(speed))}), 200
+        # return jsonify({"position": data, "speed": 0}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5500, debug=True)
